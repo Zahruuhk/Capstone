@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SnapURL</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+        }
+        .title {
+            font-size: 36px;
+            color: #ff3d5a;
+        }
+        .subtitle {
+            font-size: 18px;
+            color: #666;
+        }
+        .input-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .input-container input {
+            padding: 10px;
+            font-size: 16px;
+            width: 300px;
+            border-radius: 25px 0 0 25px;
+            border: 1px solid #ccc;
+        }
+        .input-container button {
+            padding: 10px 20px;
+            font-size: 16px;
+            color: white;
+            background-color: #007bff;
+            border: none;
+            border-radius: 0 25px 25px 0;
+            cursor: pointer;
+        }
+        .input-container button:hover {
+            background-color: #0056b3;
+        }
+        .input-container button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        .info {
+            margin-top: 10px;
+            color: #999;
+        }
+        .footer {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #999;
+        }
+        .footer span {
+            color: #ff3d5a;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="title">SnapURL</div>
+        <div class="subtitle">Shorten Your Loooong Links :)</div>
+        <div class="input-container">
+            <input type="text" id="urlInput" placeholder="Enter a link here">
+            <button onclick="shortenUrl()">Shorten</button>
+        </div>
+        <div class="info">You can create <span id="linkCount">05</span> more links. Register Now to enjoy Unlimited usage</div>
+        <div class="footer">Made with <span>&hearts;</span> by villageDev</div>
+    </div>
+
+    <script>
+        async function shortenUrl() {
+            const urlInput = document.getElementById('urlInput');
+            const originalUrl = urlInput.value;
+            const button = document.querySelector('button');
+
+            if (!originalUrl) {
+                alert('Please enter a URL.');
+                return;
+            }
+
+            button.disabled = true;
+
+            try {
+                const response = await fetch('http://localhost:5001/api/urls/shorten', {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ originalUrl })
+});
+
+                if (!response.ok) {
+                    throw new Error('Failed to shorten the URL.');
+                }
+
+                const data = await response.json();
+                alert(`Shortened URL: ${data.shortenedUrl}`);
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while shortening the URL.');
+            } finally {
+                button.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>
